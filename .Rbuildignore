@@ -1,2 +1,4 @@
 ^dc\.census\.address\.block\.count\.Rproj$
 ^\.Rproj\.user$
+^data-raw$
+^LICENSE\.md$
