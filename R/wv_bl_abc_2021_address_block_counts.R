@@ -1,4 +1,4 @@
-#' Address Counts per Census Block for Virginia.
+#' Address Counts per Census Block for West Virginia.
 #.
 #'
 #' Includes total housing units (including transitory units) and total group quarters counts, by 2020 census tabulation block.
@@ -10,5 +10,5 @@
 #'   \item{TOTAL HOUSING UNITS}{num Total number of addresses in the entity count list identified as housing units or transitory units by data in the Census Master Address File (MAF).}
 #'   \item{TOTAL GROUP QUARTERS}{num Total number of addresses in the entity count list identified as group quarters by data in the MAF.}
 #' }
-#' @source \url{https://www2.census.gov/geo/docs/reference/2020addresscountlist/51_Virginia_AddressBlockCountList_092021.txt}
-"va_bl_abc_2021_address_block_counts"
+#' @source \url{https://www2.census.gov/geo/docs/reference/2020addresscountlist/54_WestVirginia_AddressBlockCountList_092021.txt}
+"wv_bl_abc_2021_address_block_counts"
