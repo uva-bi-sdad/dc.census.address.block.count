@@ -42,6 +42,6 @@ for (i in 1:nrow(urls_state)) {
   
   # create package dataset with usethis::use_data
   assign(ds_name, ds)
-  do.call("use_data", list(as.name(ds_name), overwrite = TRUE))
+  do.call("use_data", list(as.name(ds_name), compress = "xz", overwrite = TRUE))
   do.call("rm", list(as.name(ds_name)))
 }
