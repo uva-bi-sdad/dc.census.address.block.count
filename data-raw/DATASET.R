@@ -7,7 +7,7 @@ library(rvest)
 library(data.table)
 library(usethis)
 
-state_codes <- setDT(unique(tigris::fips_codes[, c("state", "state_code")]))
+state_codes <- setDT(unique(tigris::fips_codes[, c("state", "state_code", "state_name")]))
 
 url <- "https://www.census.gov/geographies/reference-files/2020/geo/2020addcountlisting.html"
 urls_page_html <- read_html(url) 
@@ -19,11 +19,28 @@ for (i in 1:nrow(urls_state)) {
   url <- urls_state[i]$url
   print(url)
   ds_name <- paste0(tolower(urls_state[i]$state), "_bl_abc_2021_address_block_counts")
-  ds <- read_delim(url, "|")
+  ds <- setDT(read_delim(url, "|"))
   ds <- ds[, c("BLOCK_GEOID", "TOTAL HOUSING UNITS", "TOTAL GROUP QUARTERS")]
   colnames(ds) <- c("geoid", "total_housing_units", "total_group_quarters")
-  ds$total_housing_units <- as.integer(ds$total_housing_units)
-  ds$total_group_quarters <- as.integer(ds$total_group_quarters)
+  ds[, year := as.integer(2021)]
+  
+  ds <- melt(ds, id.vars = c("geoid", "year"), variable.name = "measure")
+  ds[, measure := as.character(measure)]
+  
+  attr(ds, "variables") <- c("geoid" = "Concatenation of U.S. Census STATE, COUNTY, TRACT, and BLOCK ids (15 digits).", 
+                             "year" = "Year in which data was collected.", 
+                             "measure" = "Name of the measurement variable.", 
+                             "value" = "Recorded value of the measurement value.")
+  attr(ds, "rows") <- nrow(ds)
+  attr(ds, "region_types") <- c("block" = "U.S. Census Block, 15 digits")
+  attr(ds, "measures") <- c("total_housing_units" = "Total number of addresses in the entity count list identified as housing units or transitory units by data in the Master Address File (MAF).",
+                            "total_group_quarters" = "Total number of addresses in the entity count list identified as group quarters by data in the MAF.")
+  attr(ds, "measure_types") <- c("total_housing_units" = "count", "total_group_quarters" = "count")
+  attr(ds, "measure_units") <- c("total_housing_units" = "housing unit", "total_group_quarters" = "group quarters")
+  attr(ds, "source") <- url
+  
+  
+  # create package dataset with usethis::use_data
   assign(ds_name, ds)
   do.call("use_data", list(as.name(ds_name), overwrite = TRUE))
   do.call("rm", list(as.name(ds_name)))
