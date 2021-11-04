@@ -6,6 +6,8 @@ library(stringr)
 library(rvest)
 library(data.table)
 library(usethis)
+library(dataverse)
+library(here)
 
 state_codes <- setDT(unique(tigris::fips_codes[, c("state", "state_code", "state_name")]))
 
@@ -42,6 +44,19 @@ for (i in 1:nrow(urls_state)) {
   
   # create package dataset with usethis::use_data
   assign(ds_name, ds)
-  do.call("use_data", list(as.name(ds_name), compress = "xz", overwrite = TRUE))
-  do.call("rm", list(as.name(ds_name)))
+  # do.call("use_data", list(as.name(ds_name), compress = "xz", overwrite = TRUE))
+  # do.call("rm", list(as.name(ds_name)))
+  
+  # readr::write_csv(get(ds_name), here::here(paste0("data/", ds_name, ".csv")))
+  # zip(here::here(paste0("data/", ds_name, ".csv.zip")), here::here(paste0("data/", ds_name, ".csv")))
+  # rm(here::here(paste0("data/", ds_name, ".csv")))
+  
+  readr::write_csv(get(ds_name), xzfile(here::here(paste0("data/", ds_name, ".csv.xz")), compression = 9))
+  
+  
+  dat_file_path <- here::here(paste0("data/", ds_name, ".csv.xz"))
+  add_dataset_file(file = dat_file_path,
+                   dataset = "doi:10.18130/V3/NAZO4B",
+                   server   = "dataverse.lib.virginia.edu",
+                   description = ds_name)
 }

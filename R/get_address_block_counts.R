@@ -1,0 +1,51 @@
+#' Get the address block count data for a state.
+#' Leaving outdir blank will provide the data directly.
+#' If outdir is not blank, the data file will be saved to the directory specified.
+#'
+#' @param state_abbrv 2-letter state abbreviation.
+#' @import dataverse
+#' @import readr
+#' @export
+#' @examples
+#' get_address_block_counts("AL")
+#' Rows: 371954 Columns: 4                                                                                                                                                                                      
+#' 0s── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#' Delimiter: ","
+#' chr (2): geoid, measure
+#' dbl (2): year, value
+#' 
+#' ℹ Use `spec()` to retrieve the full column specification for this data.
+#' ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+#' # A tibble: 371,954 × 4
+#' geoid            year measure             value
+#' <chr>           <dbl> <chr>               <dbl>
+#'   1 010010201001000  2021 total_housing_units     8
+#' 2 010010201001001  2021 total_housing_units    19
+#' 3 010010201001002  2021 total_housing_units    17
+#' 4 010010201001003  2021 total_housing_units    11
+#' 5 010010201001004  2021 total_housing_units     0
+#' 6 010010201001005  2021 total_housing_units     0
+#' 7 010010201001006  2021 total_housing_units     1
+#' 8 010010201001007  2021 total_housing_units     0
+#' 9 010010201001008  2021 total_housing_units     0
+#' 10 010010201001009  2021 total_housing_units     0
+#' # … with 371,944 more rows
+get_address_block_counts <- function(state_abbrv = "AL", outdir = "") {
+  state <- tolower(state_abbrv)
+  file_name <- paste0(state, "_bl_abc_2021_address_block_counts.csv.xz")
+  
+  f <- get_file_by_name(
+    filename = file_name,
+    dataset = "doi:10.18130/V3/NAZO4B",
+    key = Sys.getenv("DATAVERSE_KEY"),
+    server = "dataverse.lib.virginia.edu"
+  )
+  
+  if (outdir == "") {
+    return(readr::read_csv(xzfile(file_name)))
+  } else {
+    writeBin(f, paste0(outdir, "/", file_name))
+  }
+}
+
+get_address_block_counts()
