@@ -58,7 +58,7 @@ f <- add_dataset_file(tmp,
                       server   = "dataverse.lib.virginia.edu",
                       description = "mtcars")
 
-rda <- load("../dc.census.address.block.count/data/mi_bl_abc_2021_address_block_counts.rda")
+rda <- load("../dc.census.block.address.counts/data/mi_bl_abc_2021_address_block_counts.rda")
 
 save(ak_bl_abc_2021_address_block_counts, tmp2 <- tempfile(fileext = ".rda"))
 
