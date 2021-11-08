@@ -7,12 +7,13 @@ Authors@R:
 Description: Provides access to data in the address block count lists provided by the U.S. Cesus Bureau.
 License: CC BY 4.0
 Encoding: UTF-8
-LazyData: true
-LazyDataCompression: xz
+LazyData: false
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Depends: 
     R (>= 2.10)
 Imports: 
     tibble,
-    data.table (>= 1.9.8)
+    data.table (>= 1.9.8),
+    readr,
+    dataverse
