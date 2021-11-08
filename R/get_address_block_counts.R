@@ -34,7 +34,7 @@ get_address_block_counts <- function(state_abbrv = "AL", outdir = "") {
   state <- tolower(state_abbrv)
   file_name <- paste0(state, "_bl_abc_2021_address_block_counts.csv.xz")
   
-  f <- get_file_by_name(
+  f <- dataverse::get_file_by_name(
     filename = file_name,
     dataset = "doi:10.18130/V3/NAZO4B",
     key = Sys.getenv("DATAVERSE_KEY"),
@@ -42,10 +42,12 @@ get_address_block_counts <- function(state_abbrv = "AL", outdir = "") {
   )
   
   if (outdir == "") {
-    return(readr::read_csv(xzfile(file_name)))
+    tmp_file <- tempfile(pattern = "file", tmpdir = tempdir(), fileext = ".xz")
+    writeBin(f, tmp_file, file_name)
+    return(readr::read_csv(xzfile(tmp_file)))
   } else {
     writeBin(f, paste0(outdir, "/", file_name))
   }
 }
 
-get_address_block_counts()
+# get_address_block_counts()
