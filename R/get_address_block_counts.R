@@ -43,3 +43,15 @@ get_address_block_counts <- function(state_abbrv = "AL", outdir = "") {
 }
 
 # get_address_block_counts()
+
+get_address_block_counts_metadata <- function() {
+  dataverse::dataset_metadata(
+    dataset = "doi:10.18130/V3/NAZO4B",
+    version = ":latest",
+    block = "citation",
+    server = "dataverse.lib.virginia.edu"
+  )
+}
+
+# md <- get_address_block_counts_metadata()
+# jsonlite::toJSON(md, pretty = TRUE)
