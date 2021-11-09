@@ -24,34 +24,39 @@
 # # 10 010010201001009  2021 total_housing_units     0
 # # … with 371,944 more rows
 get_address_block_counts <- function(state_abbrv = "AL", outdir = "") {
+  srv <- "dataverse.lib.virginia.edu"
+  doi <- "doi:10.18130/V3/NAZO4B"
   state <- tolower(state_abbrv)
-  file_name <- paste0(state, "_bl_abc_2021_address_block_counts.csv.xz")
+  data_file_name <- paste0(state, "_bl_abc_2021_address_block_counts.csv.xz")
+  meta_file_name <- "us_bl_abc_2021_address_block_counts_metadata.json"
   
   f <- dataverse::get_file_by_name(
-    filename = file_name,
-    dataset = "doi:10.18130/V3/NAZO4B",
-    server = "dataverse.lib.virginia.edu"
+    filename = data_file_name,
+    dataset = doi,
+    server = srv
+  )
+  
+  d <- dataverse::dataset_metadata(
+    dataset = doi,
+    version = ":latest",
+    block = "citation",
+    server = srv
   )
   
   if (outdir == "") {
     tmp_file <- tempfile(pattern = "file", tmpdir = tempdir(), fileext = ".xz")
-    writeBin(f, tmp_file, file_name)
-    return(readr::read_csv(xzfile(tmp_file)))
+    writeBin(f, tmp_file, data_file_name)
+    pkg <- list(data = readr::read_csv(xzfile(tmp_file)),
+         metadata = jsonlite::toJSON(d))
+    return(pkg)
   } else {
-    writeBin(f, paste0(outdir, "/", file_name))
+    data_file_path <- paste0(outdir, "/", data_file_name) 
+    writeBin(f, data_file_path)
+    lines <- readr::read_lines(df <- xzfile(data_file_path))
+    readr::write_lines(lines, gsub(".xz$", "", data_file_path))
+    jsonlite::write_json(d, paste0(outdir, "/", meta_file_name), pretty = TRUE)
   }
 }
 
-# get_address_block_counts()
+# pkg <- get_address_block_counts(outdir = "data-raw")
 
-get_address_block_counts_metadata <- function() {
-  dataverse::dataset_metadata(
-    dataset = "doi:10.18130/V3/NAZO4B",
-    version = ":latest",
-    block = "citation",
-    server = "dataverse.lib.virginia.edu"
-  )
-}
-
-# md <- get_address_block_counts_metadata()
-# jsonlite::toJSON(md, pretty = TRUE)
